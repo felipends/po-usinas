@@ -134,19 +134,22 @@ class Model:
         if status == self.solver.OPTIMAL:
             print('Solution:')
             print('Objective value =', self.solver.Objective().Value())
-            for i in range(self.instance.numFactoryTypes):
-                for j in range(self.instance.factoriesPerType[i]):
-                    for k in range(self.instance.numDayPeriods):
-                        if self.x[i][j][k].solution_value():
-                            print(f'x{i}{j}{k} -> {self.x[i][j][k].solution_value()}')
-                        if self.y[i][j][k].solution_value():
-                            print(f'y{i}{j}{k} -> {self.y[i][j][k].solution_value()}')
-                        if self.q[i][j][k].solution_value():
-                            print(f'q{i}{j}{k} -> {self.q[i][j][k].solution_value()}')
-            print(self.solver.ExportModelAsLpFormat(False))
         else:
             print('The problem does not have an optimal solution.')
 
+    def printSolution(self):
+        for i in range(self.instance.numFactoryTypes):
+            for j in range(self.instance.factoriesPerType[i]):
+                for k in range(self.instance.numDayPeriods):
+                    if self.x[i][j][k].solution_value():
+                        print(f'x{i}{j}{k} -> {self.x[i][j][k].solution_value()}')
+                    if self.y[i][j][k].solution_value():
+                        print(f'y{i}{j}{k} -> {self.y[i][j][k].solution_value()}')
+                    if self.q[i][j][k].solution_value():
+                        print(f'q{i}{j}{k} -> {self.q[i][j][k].solution_value()}')
+    
+    def printModelAsLP(self):
+        print(self.solver.ExportModelAsLpFormat(False))
 
 solver = pywraplp.Solver.CreateSolver('SCIP')
 instancia = Instance("./teste.txt")
@@ -159,3 +162,5 @@ modelo = Model(instancia, solver)
 modelo.createModelVarables()
 modelo.setConstraints()
 modelo.solve()
+modelo.printSolution()
+modelo.printModelAsLP()
