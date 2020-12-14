@@ -138,16 +138,55 @@ class Model:
             print('The problem does not have an optimal solution.')
 
     def printSolution(self):
+        # for i in range(self.instance.numFactoryTypes):
+        #     print(f'usinas do tipo {i}:')
+        #     for j in range(self.instance.factoriesPerType[i]):
+        #         for k in range(self.instance.numDayPeriods):
+        #             if self.y[i][j][k].solution_value():
+        #                 print(f'usina {j} foi ligada no período {k}')
+        #             if self.x[i][j][k].solution_value():
+        #                 print(f'usina {j} estava ligada no período {k}')
+        #                 print(f'usina {j} no período {k} produziu {self.q[i][j][k].solution_value() + self.instance.minProdPerType[i]}')
+        
+        print("\n ************** UNIDADES LIGADAS POR PERÍODO\n")
+        for k in range(self.instance.numDayPeriods):
+            print(f'\nPeríodo {k}:\n')
+            usinas = [0] * self.instance.numFactoryTypes
+            for i in range(self.instance.numFactoryTypes):
+                for j in range(self.instance.factoriesPerType[i]):
+                    if self.x[i][j][k].solution_value():
+                        usinas[i] += 1
+            for idx in range(len(usinas)):
+                print(f'Foram utilizadas {usinas[idx]} usinas do tipo {idx}')
+
+        print("\n ************** PRODUÇÃO POR PERÍODO\n")
+        for k in range(self.instance.numDayPeriods):
+            print(f'Período {k}:\n')
+            for i in range(self.instance.numFactoryTypes):
+                print(f'Tipo {i}:\n')
+                for j in range(self.instance.factoriesPerType[i]):
+                    if self.x[i][j][k].solution_value():
+                        print(f'Unidade {j} produziu: {self.q[i][j][k].solution_value()+self.instance.minProdPerType[i]}\n')
+                print("--------------------------------------------------")
+            print("\n##################################################")
+
+        print("\n ************** CUSTO POR TIPO\n")
         for i in range(self.instance.numFactoryTypes):
+            minCost = 0
+            adtCost = 0
+            turnOnCost = 0
+            print(f'Tipo {i}:\n')
             for j in range(self.instance.factoriesPerType[i]):
                 for k in range(self.instance.numDayPeriods):
                     if self.x[i][j][k].solution_value():
-                        print(f'x{i}{j}{k} -> {self.x[i][j][k].solution_value()}')
+                        minCost += self.instance.minProdCostPerType[i]
+                        adtCost += self.q[i][j][k].solution_value()*self.instance.aditionalProdCostPerType[i]
                     if self.y[i][j][k].solution_value():
-                        print(f'y{i}{j}{k} -> {self.y[i][j][k].solution_value()}')
-                    if self.q[i][j][k].solution_value():
-                        print(f'q{i}{j}{k} -> {self.q[i][j][k].solution_value()}')
-    
+                        turnOnCost += self.instance.turnOnCostPerType[i]
+            print(f'Custo mínimo: {minCost}')
+            print(f'Custo adicional: {adtCost}')
+            print(f'Custo de Ligação: {turnOnCost}')
+            print("##################################################\n")
     def printModelAsLP(self):
         print(self.solver.ExportModelAsLpFormat(False))
 
@@ -163,4 +202,4 @@ modelo.createModelVarables()
 modelo.setConstraints()
 modelo.solve()
 modelo.printSolution()
-modelo.printModelAsLP()
+# modelo.printModelAsLP()
