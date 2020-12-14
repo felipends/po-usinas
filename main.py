@@ -129,24 +129,13 @@ class Model:
         objetctive.SetMinimization()
         
         status = self.solver.Solve()
-        print('Number of variables =', self.solver.NumVariables())
-        print('Number of variables =', self.solver.NumConstraints())
         if status == self.solver.OPTIMAL:
             print('Solution:')
             print('Objective value =', self.solver.Objective().Value())
         else:
-            print('The problem does not have an optimal solution.')
+            print('O problema não possui solução ótima.')
 
     def printSolution(self):
-        # for i in range(self.instance.numFactoryTypes):
-        #     print(f'usinas do tipo {i}:')
-        #     for j in range(self.instance.factoriesPerType[i]):
-        #         for k in range(self.instance.numDayPeriods):
-        #             if self.y[i][j][k].solution_value():
-        #                 print(f'usina {j} foi ligada no período {k}')
-        #             if self.x[i][j][k].solution_value():
-        #                 print(f'usina {j} estava ligada no período {k}')
-        #                 print(f'usina {j} no período {k} produziu {self.q[i][j][k].solution_value() + self.instance.minProdPerType[i]}')
         
         print("\n ************** UNIDADES LIGADAS POR PERÍODO\n")
         for k in range(self.instance.numDayPeriods):
